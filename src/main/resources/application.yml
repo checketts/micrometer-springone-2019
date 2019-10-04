@@ -1,0 +1,15 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health,prometheus,metrics
+
+  endpoint:
+    health:
+      show-details: always
+
+
+  metrics:
+    distribution:
+      percentiles.all: 0.5
+      percentiles.http: 0.8,0.99

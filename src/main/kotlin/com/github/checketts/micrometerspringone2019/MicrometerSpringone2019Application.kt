@@ -1,3 +1,5 @@
+@file:Suppress("SpringFacetCodeInspection")
+
 package com.github.checketts.micrometerspringone2019
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
