@@ -3,6 +3,7 @@ package com.github.checketts.micrometerspringone2019
 import io.micrometer.core.instrument.Clock
 import io.micrometer.core.instrument.Gauge
 import io.micrometer.core.instrument.Meter
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
@@ -19,17 +20,16 @@ data class Chore(val name: String, val duration: Duration, val group: String = "
 val chores = listOf(
         Chore("Mow front lawn", 20.minutes, "yard"),
         Chore("Mow back lawn", 10.minutes, "yard"),
-        Chore("Gather dirty laundry", 10.minutes, "laundry"),
-        Chore("Load laundry", 5.minutes, "laundry"),
-        Chore("Sort laundry", 45.minutes, "laundry"),
-        Chore("Wash dishes", 10.minutes, "kitchen"),
+        Chore("Gather the laundry", 7.minutes, "laundry"),
+        Chore("Wash the laundry", 3.minutes, "laundry"),
+        Chore("Sort/Fold the laundry", 50.minutes, "laundry"),
+        Chore("Was the dishes", 10.minutes, "kitchen"),
         Chore("Find my phone charger", Duration.ofNanos(5))
 )
 
 fun main() {
     val meterRegistry = Metrics.globalRegistry
     val simple = SimpleMeterRegistry().apply { meterRegistry.add(this) }
-
     val config = object: LoggingRegistryConfig {
         override fun get(key: String)=null
         override fun logInactive()= true
@@ -37,28 +37,26 @@ fun main() {
     }
     val loggingRegistry = LoggingMeterRegistry(config, Clock.SYSTEM).apply {
         meterRegistry.add(this) }
-//    loggingRegistry.config().meterFilter(MeterFilter.accept { it.name == "chore.completed" })
-//    loggingRegistry.config().meterFilter(MeterFilter.deny())
 
-
-//    meterRegistry.config().meterFilter(MeterFilter.deny { it.name == "chore.completed"})
-//    meterRegistry.config().meterFilter(MeterFilter.maximumAllowableMetrics(3))
-    val groupingMeterFilter = object: MeterFilter {
+//    meterRegistry.config().meterFilter(MeterFilter.deny({it.name == "chore.completed"}))
+//    meterRegistry.config().meterFilter(MeterFilter.maximumAllowableMetrics(2))
+    meterRegistry.config().meterFilter(object: MeterFilter {
         override fun map(id: Meter.Id): Meter.Id {
-            if (id.name == "chore.time") {
-                return id.replaceTags(id.tags.map { if (it.value == "laundry") it else Tag.of(it.key, "other") })
+            if(id.name == "chore.duration") {
+                return id.replaceTags(id.tags.map { if(it.key == "group" && it.value == "laundry") it else Tag.of(it.key,"other") })
             } else {
                 return id
             }
         }
-    }
-    meterRegistry.config().meterFilter(groupingMeterFilter)
+    })
+    meterRegistry.config().commonTags("team", "spring")
+
 
     addGauge(meterRegistry)
     for (chore in chores) {
-        println("Doing my chore: ${chore.name}")
+        println("Doing ${chore.name}")
         meterRegistry.counter("chore.completed").increment()
-        meterRegistry.timer("chore.time", Tags.of("group", chore.group)).record(chore.duration)
+        meterRegistry.timer("chore.duration", Tags.of("group", chore.group)).record(chore.duration)
     }
 
     for (meter in simple.meters) {
@@ -70,11 +68,12 @@ fun main() {
         Thread.sleep(1000)
         println("Waiting $it")
     }
+
 }
 
-private fun addGauge(meterRegistry: CompositeMeterRegistry) {
-    val choreList = chores.map { it }
-//    meterRegistry.gauge("chore.size.weak", choreList, {it.size.toDouble()})
-//    meterRegistry.gauge("chore.size.lambda", "", {choreList.size.toDouble()})
-    Gauge.builder("chore.size.strong", choreList, {it.size.toDouble()}).strongReference(true).register(meterRegistry)
+fun addGauge(meterRegistry: MeterRegistry) {
+    val choresList = chores.map { it }
+    meterRegistry.gauge("chore.size.weak", choresList, { it.size.toDouble()})
+    meterRegistry.gauge("chore.size.lambda", "", { choresList.size.toDouble()})
+    Gauge.builder("chore.size.strong", choresList, {it.size.toDouble()}).strongReference(true).register(meterRegistry)
 }

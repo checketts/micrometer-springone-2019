@@ -44,13 +44,13 @@ fun main() {
     val groupChores = object : MeterFilter {
         override fun map(id: Meter.Id): Meter.Id {
             if(id.name == "chore.duration") {
-                return id.replaceTags(id.tags.map { if(it.value == "laundry") it else Tag.of(it.key,"other") })
+                return id.replaceTags(id.tags.map { if(it.key == "group" && it.value == "laundry") it else Tag.of(it.key,"other") })
             } else {
                 return id
             }
         }
     }
-//    meterRegistry.config().meterFilter(groupChores)
+    meterRegistry.config().meterFilter(groupChores)
 //    meterRegistry.config().meterFilter(MeterFilter.maximumAllowableMetrics(3))
 
     addGauge0(meterRegistry)
