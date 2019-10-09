@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AnalyticsService} from '../analytics.service';
 
 @Component({
   selector: 'app-request-favor',

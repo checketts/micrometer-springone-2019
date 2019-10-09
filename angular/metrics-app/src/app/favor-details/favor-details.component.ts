@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {AnalyticsService} from '../analytics.service';
 
 @Component({
   selector: 'app-favor-details',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FavorDetailsComponent implements OnInit {
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
   }

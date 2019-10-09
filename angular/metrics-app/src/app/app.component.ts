@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {AnalyticsService} from './analytics.service';
+import {MatTabChangeEvent} from '@angular/material';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +12,10 @@ export class AppComponent {
 
   constructor(private analytics: AnalyticsService) {
     this.analytics.subscribeToRouterEventsAndPublishMetrics(5000);
+  }
+
+  recordChange($event: MatTabChangeEvent) {
+    console.log('record', $event.tab);
+    this.analytics.increment($event.tab.textLabel);
   }
 }

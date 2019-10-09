@@ -13,6 +13,7 @@ export class AnalyticsService {
   constructor(private httpClient: HttpClient, private router: Router) {}
 
   subscribeToRouterEventsAndPublishMetrics(publishInterval: number) {
+    console.log('sub!')
     this.router.events.subscribe(e => {
       if (e instanceof ActivationStart) {
         const component = e.snapshot.routeConfig.path;
@@ -21,15 +22,18 @@ export class AnalyticsService {
       }
     });
 
+    console.log('sub! 2')
     interval(publishInterval)
       .pipe(
         map(() => {
+          console.log('boink');
           const currentMetrics = this.componentMetrics;
           this.componentMetrics = new Map();
           return currentMetrics;
         })
       )
       .subscribe(metrics => {
+        console.log('sub! 3', metrics)
         if (metrics.size > 0) {
           const metricsObject = {};
           metrics.forEach((value, key) => (metricsObject[key] = value));
