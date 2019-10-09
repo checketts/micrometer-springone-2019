@@ -13,6 +13,7 @@ networks:
     driver: bridge
 
 services:
+  #Postgres and pgadmin are just to demonstrate health check capabilities and aren't required for Prometheus, ALertmanager, or Grafana
   postgres:
     container_name: postgres_container
     image: postgres
