@@ -13,3 +13,10 @@ management:
     distribution:
       percentiles.all: 0.5
       percentiles.http: 0.8,0.99
+
+
+spring.datasource:
+  url: jdbc:postgresql://localhost:5432/postgres
+  username: postgres
+  password: changeme
+

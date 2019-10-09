@@ -17,6 +17,8 @@ class OtherApplication{
 	fun users(@PathVariable shouldFail: Int): List<User> {
 		if(shouldFail == 1) {
 			throw RuntimeException("Boom! Taking a break,")
+		} else {
+			println("Worked! $shouldFail")
 		}
 
 		return listOf(

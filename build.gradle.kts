@@ -29,12 +29,18 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-	implementation("io.micrometer:micrometer-registry-prometheus:latest.release")
-	
-	implementation("com.github.ben-manes.caffeine:caffeine:2.8.0")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.postgresql:postgresql")
 
-	val resilience4jVersion = "1.1.0"
-	implementation("io.github.resilience4j:resilience4j-spring-boot2:$resilience4jVersion")
+	//Additions ==================================================================
+	//Additions ==================================================================
+	//Additions ==================================================================
+	implementation("io.micrometer:micrometer-registry-prometheus:latest.release")  //Activates Prometheus Registry and Actuator
+	implementation("com.github.ben-manes.caffeine:caffeine:2.8.0") // Cache library
+	implementation("io.github.resilience4j:resilience4j-spring-boot2:1.1.0") // Circuit breaker library
+	// ==========================================================================
+	// ==========================================================================
+	// ==========================================================================
 
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
